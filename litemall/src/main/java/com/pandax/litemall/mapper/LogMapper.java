@@ -27,4 +27,6 @@ public interface LogMapper {
     int updateByPrimaryKeySelective(Log record);
 
     int updateByPrimaryKey(Log record);
+
+    List<Log> selectByCondition(@Param("name") String name, @Param("sort") String sort,@Param("order") String order);
 }

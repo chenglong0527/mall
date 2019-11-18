@@ -4,6 +4,7 @@ import com.pandax.litemall.bean.BaseReqVo;
 import com.pandax.litemall.bean.RoleInfo;
 import com.pandax.litemall.service.AdminService;
 import com.pandax.litemall.service.RoleService;
+import com.pandax.litemall.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("admin")
@@ -60,5 +62,30 @@ public class SystemController {
         baseReqVo.setErrno(0);
         return baseReqVo;
     }
+    /**
+     * 显示所有管理员称号
+     *
+     * @return options数组，以及基本信息
+     */
+    @RequestMapping("admin/update")
+    public BaseReqVo adminUpdate() {
+        BaseReqVo baseReqVo = new BaseReqVo();
+        List<RoleInfo> roleList = roleService.selectRoles();
+        baseReqVo.setData(roleList);
+        baseReqVo.setErrmsg("成功");
+        baseReqVo.setErrno(0);
+        return baseReqVo;
+    }
 
+    @Autowired
+    SystemService systemService;
+    @RequestMapping("log/list")
+    public BaseReqVo logList(Integer page,Integer limit,String name,String sort,String order) {
+        BaseReqVo baseReqVo = new BaseReqVo();
+        Map<String,Object> map = systemService.logList(page,limit,name,sort,order);
+        baseReqVo.setData(map);
+        baseReqVo.setErrmsg("成功");
+        baseReqVo.setErrno(0);
+        return baseReqVo;
+    }
 }

@@ -1,5 +1,7 @@
 package com.pandax.litemall.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -36,6 +38,7 @@ public class Order {
 
     private String payId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GTM+8")
     private Date payTime;
 
     private String shipSn;

@@ -105,10 +105,6 @@ public class MallController {
 
     @RequestMapping("admin/order/list")
     public BaseReqVo orderList(Integer page, Integer limit,Integer orderStatusArray, String sort, String order,Integer userId,String orderSn) {
-        System.out.println("orderStatusArray="+orderStatusArray);
-        System.out.println("userId="+userId);
-        System.out.println("orderSn="+orderSn);
-        System.out.println("".equals(orderSn));
         BaseReqVo<Object> baseReqVo = new BaseReqVo<>();
         HashMap<String, Object> map = mallService.orderList(page,limit,orderStatusArray,sort,order,userId,orderSn);
         baseReqVo.setData(map);
