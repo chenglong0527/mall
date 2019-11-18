@@ -61,40 +61,4 @@ public class SystemController {
         return baseReqVo;
     }
 
-
-    /**
-     * 保存静态资源（比如图片）
-     * @param file 上传的静态资源
-     * @return 状态码
-     */
-    @RequestMapping("storage/create ")
-    public BaseReqVo storageResource(@RequestParam("file") MultipartFile file) {
-        BaseReqVo<Object> baseReqVo = new BaseReqVo<>();
-        try {
-            if (file.isEmpty()) {
-                return baseReqVo;
-            }
-            // 获取文件名
-            String fileName = file.getOriginalFilename();
-            // 获取文件的后缀名
-            String suffixName = fileName.substring(fileName.lastIndexOf("."));
-            // 设置文件存储路径
-            //String filePath = "D:/Test/Downloads/";
-            String filePath = "static/";
-            String path = filePath + fileName;
-            File dest = new File(path);
-            // 检测是否存在目录
-            if (!dest.getParentFile().exists()) {
-                dest.getParentFile().mkdirs();// 新建文件夹
-            }
-            file.transferTo(dest);// 文件写入
-            return baseReqVo;
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return baseReqVo;
-
-    }
 }
