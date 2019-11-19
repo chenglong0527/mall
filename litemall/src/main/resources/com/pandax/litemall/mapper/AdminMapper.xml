@@ -22,4 +22,15 @@
     select <include refid="adminInfo"/> from cskaoyan_mall_admin
     order by ${sort} ${order}
   </select>
+  <select id="selectAdminsByUsername" resultMap="BaseResultMap">
+    select <include refid="adminInfo"/> from cskaoyan_mall_admin
+    where username=#{username}
+  </select>
+  <resultMap id="Roles" type="com.pandax.litemall.bean.Role">
+    <result column="role_ids" property="roles" typeHandler="com.pandax.litemall.handler.String2ArrayTypeHandler"/>
+  </resultMap>
+  <select id="selectRolesByUsername" resultMap="Roles">
+    select role_ids from cskaoyan_mall_admin
+    where username=#{username}
+  </select>
 </mapper>

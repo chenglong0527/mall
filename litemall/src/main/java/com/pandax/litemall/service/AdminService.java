@@ -1,6 +1,7 @@
 package com.pandax.litemall.service;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Da
@@ -10,7 +11,7 @@ import java.util.HashMap;
  */
 
 public interface AdminService {
-
     HashMap<String, Object> queryUsers(Integer page,
                                        Integer limit, String sort, String order);
+    List<String> selectPermissionByUsername(String username);
 }

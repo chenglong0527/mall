@@ -4,6 +4,8 @@ import com.pandax.litemall.mapper.CouponUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Da
  * @version 1.0
@@ -20,5 +22,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public int countUsers() {
         return (int) couponUserMapper.countByExample(null);
+    }
+
+    @Override
+    public List<String> selectPermissionByUsername(String username) {
+        //通过
+        return null;
     }
 }

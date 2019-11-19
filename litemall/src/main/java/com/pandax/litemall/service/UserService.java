@@ -1,5 +1,7 @@
 package com.pandax.litemall.service;
 
+import java.util.List;
+
 /**
  * @author Da
  * @version 1.0
@@ -9,4 +11,6 @@ package com.pandax.litemall.service;
 
 public interface UserService {
     int countUsers();
+
+    List<String> selectPermissionByUsername(String username);
 }

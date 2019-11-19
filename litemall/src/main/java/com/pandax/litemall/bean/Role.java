@@ -20,4 +20,5 @@ public class Role {
     private Date addTime;
     private Date updateTime;
     private int deleted;
+    private String[] roles;
 }
