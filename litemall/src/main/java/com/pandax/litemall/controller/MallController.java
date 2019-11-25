@@ -2,6 +2,7 @@ package com.pandax.litemall.controller;
 
 import com.pandax.litemall.bean.*;
 import com.pandax.litemall.service.MallService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ public class MallController {
     }
 
     @RequestMapping("admin/brand/list")
+    @RequiresPermissions("admin:brand:list")
     public BaseReqVo brandList(Integer page, Integer limit, String sort, String order,Integer id,String name) {
         BaseReqVo<Object> baseReqVo = new BaseReqVo<>();
         HashMap<String, Object> map = mallService.brand(page,limit,sort,order,id,name);
@@ -43,6 +45,7 @@ public class MallController {
         return baseReqVo;
     }
     @RequestMapping("admin/brand/delete")
+    @RequiresPermissions("admin:brand:delete")
     public BaseReqVo brandDelete(@RequestBody Brand newBrand) {
         BaseReqVo<Object> baseReqVo = new BaseReqVo<>();
         mallService.brandDelete(newBrand);

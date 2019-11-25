@@ -2,8 +2,11 @@ package com.pandax.litemall.shiro;
 
 import com.pandax.litemall.bean.Admin;
 import com.pandax.litemall.mapper.AdminMapper;
-import com.pandax.litemall.service.AdminService;
-import org.apache.shiro.authc.*;
+import com.pandax.litemall.mapper.PermissionMapper;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -15,29 +18,47 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 public class AdminRealm extends AuthorizingRealm {
-
+    /**
+     * 登录认证
+     * @param authenticationToken
+     * @return
+     * @throws AuthenticationException
+     */
     @Autowired
     AdminMapper adminMapper;
-    @Autowired
-    AdminService adminService;
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        UsernamePasswordToken token= (UsernamePasswordToken) authenticationToken;
+        MallToken token= (MallToken) authenticationToken;
+        //获取username
         String username = token.getUsername();
-        Admin admin=adminMapper.selectAdminsByUsername(username);
-        String passwordFromDb = admin.getPassword();
-        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(admin, passwordFromDb, getName());
+        //获取存在数据库中的账户真实数据
+        Admin admin = adminMapper.selectAdminsByUsername(username);
+        //构造认证器信息
+        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(admin, admin.getPassword(), getName());
         return simpleAuthenticationInfo;
     }
 
-
+    /**
+     * 授权
+     * @param principalCollection
+     * @return
+     */
+    @Autowired
+    PermissionMapper permissionMapper;
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        Admin primaryPrincipal = (Admin) principalCollection.getPrimaryPrincipal();
-        String username = primaryPrincipal.getUsername();
+        //获取用户的基本信息
+        Admin admin= (Admin) principalCollection.getPrimaryPrincipal();
+        Integer[] roleIds = admin.getRoleIds();
+        ArrayList<String> permissions = new ArrayList<>();
+        for (Integer roleId : roleIds) {
+            List<String> list = permissionMapper.selectPersionsByRoleId(roleId);
+            permissions.addAll(list);
+        }
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        List<String> permissions=adminService.selectPermissionByUsername(username);
         authorizationInfo.addStringPermissions(permissions);
         return authorizationInfo;
     }
+
+
 }

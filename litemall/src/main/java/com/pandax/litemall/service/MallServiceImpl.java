@@ -21,14 +21,21 @@ public class MallServiceImpl implements MallService {
 
     @Override
     public Region[] region() {
-        Region[] regions = regionMapper.setlectAllRegion();
+        /*Region[] regions = regionMapper.setlectAllRegion();
         for (Region region : regions) {
             for (Region child : region.getChildren()) {
                 Region[] regions1 = regionMapper.selectByPid(child.getId());
                 child.setChildren(regions1);
-                System.out.println(Arrays.toString(regions1));
             }
-        }
+        }*/
+        //首先将所有省一级的全部查出
+        Region[] regions = regionMapper.setlectAllRegion();
+        //再查市和区一级的
+        for (Region region : regions) {
+            Integer id = region.getId();
+            Region[] regions1 = regionMapper.selectByPid(id);
+            region.setChildren(regions1);
+    }
         return regions;
     }
 

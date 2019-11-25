@@ -15,4 +15,7 @@
         add_time, update_time,deleted
         from cskaoyan_mall_role
     </select>
+    <select id="selectNameById" resultType="string">
+        select name from cskaoyan_mall_role where id=#{roleId}
+    </select>
 </mapper>

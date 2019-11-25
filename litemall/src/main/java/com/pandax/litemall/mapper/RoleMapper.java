@@ -1,6 +1,6 @@
 package com.pandax.litemall.mapper;
 
-import com.pandax.litemall.bean.Role;
+import com.pandax.litemall.bean.Role;import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,4 +13,6 @@ import java.util.List;
 
 public interface RoleMapper {
     List<Role> selectRoles();
+
+    String selectNameById(@Param("roleId")Integer roleId);
 }

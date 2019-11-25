@@ -217,14 +217,14 @@
     <result column="code" property="code"/>
     <collection property="children" column="id" select="com.pandax.litemall.mapper.RegionMapper.selectChild1"/>
   </resultMap>
-  <select id="setlectAllRegion" resultMap="allRegion1">
+  <select id="setlectAllRegion" resultType="com.pandax.litemall.bean.Region">
     select id,name,type,code from cskaoyan_mall_region where type=1
   </select>
-  <select id="selectChild1" resultType="com.pandax.litemall.bean.Region">
-    select id,pid,name,type,code from cskaoyan_mall_region where type=2 and pid=#{id}
+  <select id="selectByPid" resultMap="BaseResultMap">
+    select id,pid,name,type,code from cskaoyan_mall_region where type=2 and pid=#{pid}
   </select>
 
-  <select id="selectByPid" resultMap="BaseResultMap">
-    select id,pid,name,type,code from cskaoyan_mall_region where type=3 and pid=#{pid}
+  <select id="selectChild1" resultType="com.pandax.litemall.bean.Region">
+    select id,pid,name,type,code from cskaoyan_mall_region where type=3 and pid=#{id}
   </select>
 </mapper>

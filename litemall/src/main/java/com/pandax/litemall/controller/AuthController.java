@@ -1,60 +1,81 @@
 package com.pandax.litemall.controller;
-import java.io.Serializable;
-import java.util.ArrayList;
 
+import com.pandax.litemall.bean.Admin;
 import com.pandax.litemall.bean.BaseReqVo;
-import com.pandax.litemall.bean.BaseRespVo;
-import com.pandax.litemall.bean.InfoData;
 import com.pandax.litemall.bean.LoginVo;
-import com.pandax.litemall.shiro.CustomToken;
+import com.pandax.litemall.mapper.PermissionMapper;
+import com.pandax.litemall.mapper.RoleMapper;
+import com.pandax.litemall.shiro.MallToken;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 public class AuthController {
 
     @RequestMapping("admin/auth/login")
-    public BaseRespVo login(@RequestBody LoginVo loginVo){
-        String username = loginVo.getUsername();
-        String password = loginVo.getPassword();
-
-        CustomToken authenticationToken = new CustomToken(username, password,"admin");
+    public BaseReqVo login(@RequestBody LoginVo loginVo) {
         Subject subject = SecurityUtils.getSubject();
-
+        MallToken token = new MallToken(loginVo.getUsername(), loginVo.getPassword(),"admin");
         try {
-            subject.login(authenticationToken);
-        } catch (AuthenticationException e) {
-            System.out.println("登录失败");
-            return BaseRespVo.fail();
-            //e.printStackTrace();
+            subject.login(token);
+        } catch (Exception e) {
+            return BaseReqVo.fail();
         }
-        boolean permitted = subject.isPermitted("admin:query");
-        System.out.println(permitted);
         Serializable id = subject.getSession().getId();
-        return BaseRespVo.ok(id);
+        return BaseReqVo.ok(id);
     }
+
+    /**
+     * 获取用户所具有的所有权限
+     *
+     * @param token
+     * @return
+     */
+    @Autowired
+    PermissionMapper permissionMapper;
+    @Autowired
+    RoleMapper roleMapper;
+
     @RequestMapping("admin/auth/info")
-    public BaseReqVo info(String token){
-        BaseReqVo baseReqVo = new BaseReqVo();
-        InfoData data = new InfoData();
-        data.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
-        data.setName("songge");
-        ArrayList<String> perms = new ArrayList<>();
-        perms.add("*");
-        data.setPerms(perms);
+    public BaseReqVo info(String token) {
+        Subject subject = SecurityUtils.getSubject();
+        Admin admin = (Admin) subject.getPrincipal();
+        //获取权限id
+        Integer[] roleIds = admin.getRoleIds();
+        ArrayList<String> permissions = new ArrayList<>();
         ArrayList<String> roles = new ArrayList<>();
-        roles.add("超级管理员");
-        data.setRoles(roles);
+        for (Integer roleId : roleIds) {
+            List<String> list = permissionMapper.selectPersionsByRoleId(roleId);
+            permissions.addAll(list);
+            //获取权限名
+            String roleName = roleMapper.selectNameById(roleId);
+            roles.add(roleName);
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("avatar", "");
+        map.put("name", admin.getUsername());
+        if("admin123".equals(admin.getUsername())){
+            permissions.clear();
+            permissions.add("*");
+        }
+        map.put("perms", permissions);
+        map.put("roles", roles);
+        return BaseReqVo.ok(map);
+    }
 
-        baseReqVo.setData(data);
-        baseReqVo.setErrmsg("成功");
-        baseReqVo.setErrno(0);
-
-
-        return baseReqVo;
+    @RequestMapping("admin/auth/logout")
+    public BaseReqVo logout() {
+        SecurityUtils.getSubject().logout();
+        return BaseReqVo.ok();
     }
 }
